@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智動流 | 讓每個中小企業都能擁有大企業的效率</title>
+    <title>智動流 | 讓中小企業沒有難用的系統</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-navy: #1a2332;
-            --warm-orange: #ff6b35;
-            --soft-cream: #fef8f3;
-            --deep-teal: #2a6f7f;
-            --light-grey: #f5f5f5;
-            --text-dark: #2c3e50;
-            --text-light: #6c757d;
+            --primary-dark: #0A1628;
+            --primary-blue: #1E3A8A;
+            --accent-orange: #F97316;
+            --accent-cyan: #06B6D4;
+            --text-primary: #F8FAFC;
+            --text-secondary: #CBD5E1;
+            --surface: #1E293B;
+            --surface-light: #334155;
+            --success-green: #10b981;
+            --warning-red: #ef4444;
         }
 
         * {
@@ -26,9 +29,30 @@
 
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            color: var(--text-dark);
-            background: var(--soft-cream);
-            line-height: 1.8;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* 背景動態網格 */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(30, 58, 138, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(30, 58, 138, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
         }
 
         /* 導航列 */
@@ -36,15 +60,15 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 1.2rem 6%;
-            background: rgba(255, 255, 255, 0.98);
+            padding: 1.5rem 5%;
+            background: rgba(10, 22, 40, 0.95);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(249, 115, 22, 0.1);
         }
 
         nav .container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -52,188 +76,285 @@
         }
 
         .logo {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
-            color: var(--warm-orange);
-            font-family: 'Noto Serif TC', serif;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
         }
 
-        .nav-cta {
+        .cta-button {
             padding: 0.8rem 2rem;
-            background: var(--warm-orange);
+            background: var(--accent-orange);
             color: white;
             border: none;
-            border-radius: 30px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            font-family: 'Noto Sans TC', sans-serif;
         }
 
-        .nav-cta:hover {
-            background: #e85d2a;
+        .cta-button:hover {
+            background: #EA580C;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);
         }
 
-        /* Hero - 故事開場 */
-        .hero-story {
-            min-height: 90vh;
-            padding: 10rem 6% 4rem;
-            background: linear-gradient(135deg, #fef8f3 0%, #fff 100%);
+        /* Hero 區塊 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 5% 4rem;
             position: relative;
-            overflow: hidden;
         }
 
-        .hero-story::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .hero-content-story {
-            max-width: 1300px;
+        .hero-content {
+            max-width: 1400px;
             margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 1;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
         }
 
-        .hero-story h1 {
-            font-size: 3.5rem;
+        .hero-text h1 {
+            font-size: 4rem;
             font-weight: 900;
-            line-height: 1.3;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
-            color: var(--primary-navy);
-            font-family: 'Noto Serif TC', serif;
+            background: linear-gradient(135deg, #FFFFFF, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .hero-story .highlight {
-            color: var(--warm-orange);
+        .hero-text .highlight {
+            color: var(--accent-orange);
+            -webkit-text-fill-color: var(--accent-orange);
+        }
+
+        .hero-text p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: left;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.2s; }
+        .stat-item:nth-child(2) { animation-delay: 0.4s; }
+        .stat-item:nth-child(3) { animation-delay: 0.6s; }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent-orange);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 工作流視覺化 */
+        .workflow-visual {
             position: relative;
-            display: inline-block;
+            padding: 2rem;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(249, 115, 22, 0.2);
         }
 
-        .hero-story .subtitle {
-            font-size: 1.4rem;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            max-width: 800px;
+        .workflow-nodes {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .workflow-node {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-cyan);
+            transition: all 0.3s ease;
+            animation: nodeFloat 3s ease-in-out infinite;
+        }
+
+        .workflow-node:nth-child(1) { animation-delay: 0s; }
+        .workflow-node:nth-child(2) { animation-delay: 1s; }
+        .workflow-node:nth-child(3) { animation-delay: 2s; }
+
+        @keyframes nodeFloat {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .workflow-node:hover {
+            border-left-color: var(--accent-orange);
+            transform: translateX(15px) !important;
+        }
+
+        .node-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent-cyan);
+        }
+
+        .node-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 內容區塊通用樣式 */
+        section {
+            padding: 6rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-            line-height: 1.9;
         }
 
-        /* 客戶故事輪播 */
-        .customer-journey {
-            padding: 6rem 6%;
-            background: white;
-        }
-
-        .section-header {
-            text-align: center;
+        /* 客戶旅程 - 新增 */
+        .journey-section {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(249, 115, 22, 0.05));
+            border-radius: 30px;
+            padding: 4rem;
             margin-bottom: 4rem;
         }
 
-        .section-header h2 {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: var(--primary-navy);
-            margin-bottom: 1rem;
-            font-family: 'Noto Serif TC', serif;
-        }
-
-        .section-header p {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .journey-container {
-            max-width: 1300px;
-            margin: 0 auto;
+        .journey-timeline {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 3rem;
+            margin-top: 3rem;
+            position: relative;
         }
 
-        .journey-card {
-            background: var(--soft-cream);
+        .journey-step {
+            background: var(--surface);
             border-radius: 20px;
             padding: 3rem 2.5rem;
-            transition: all 0.4s ease;
             position: relative;
+            transition: all 0.4s ease;
             border: 2px solid transparent;
         }
 
-        .journey-card:hover {
+        .journey-step:hover {
+            border-color: var(--accent-orange);
             transform: translateY(-10px);
-            border-color: var(--warm-orange);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2);
         }
 
         .journey-phase {
             display: inline-block;
             padding: 0.5rem 1.2rem;
-            background: var(--warm-orange);
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
             color: white;
             border-radius: 20px;
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 1.5rem;
         }
 
-        .journey-card h3 {
+        .journey-step h3 {
             font-size: 1.8rem;
-            margin-bottom: 1.2rem;
-            color: var(--primary-navy);
-            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
         }
 
-        .journey-card p {
-            color: var(--text-light);
+        .journey-step p {
+            color: var(--text-secondary);
             line-height: 1.9;
             margin-bottom: 1.5rem;
         }
 
         .journey-quote {
             font-style: italic;
-            color: var(--deep-teal);
-            border-left: 3px solid var(--warm-orange);
+            color: var(--accent-cyan);
+            border-left: 3px solid var(--accent-orange);
             padding-left: 1.2rem;
             margin-top: 1.5rem;
             font-size: 1.05rem;
         }
 
-        /* 使用前後對比 */
-        .before-after {
-            padding: 6rem 6%;
-            background: linear-gradient(135deg, var(--primary-navy) 0%, var(--deep-teal) 100%);
-            color: white;
-        }
-
-        .comparison-grid {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+        /* 使用前後對比 - 新增 */
+        .before-after-section {
+            padding: 6rem 5%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 58, 138, 0.3));
             margin-top: 4rem;
         }
 
-        .comparison-side {
-            background: rgba(255, 255, 255, 0.1);
+        .comparison-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .comparison-card {
+            background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
+            border-radius: 25px;
             padding: 3rem;
+            border: 2px solid rgba(249, 115, 22, 0.2);
             position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .comparison-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         }
 
         .comparison-label {
@@ -242,23 +363,24 @@
             left: 50%;
             transform: translateX(-50%);
             padding: 0.6rem 2rem;
-            border-radius: 30px;
+            border-radius: 25px;
             font-weight: 700;
             font-size: 1.1rem;
         }
 
         .before-label {
-            background: #e74c3c;
+            background: var(--warning-red);
         }
 
         .after-label {
-            background: #27ae60;
+            background: var(--success-green);
         }
 
-        .comparison-side h3 {
+        .comparison-card h3 {
             font-size: 2rem;
             margin-bottom: 2rem;
             margin-top: 1rem;
+            text-align: center;
         }
 
         .comparison-list {
@@ -266,35 +388,39 @@
         }
 
         .comparison-list li {
-            padding: 1.2rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.2rem 1rem;
+            margin-bottom: 0.8rem;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.5);
             display: flex;
             align-items: flex-start;
             gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-list li:hover {
+            transform: translateX(10px);
         }
 
         .comparison-list li::before {
             content: '✗';
-            color: #e74c3c;
+            color: var(--warning-red);
             font-size: 1.5rem;
             font-weight: 700;
             flex-shrink: 0;
         }
 
-        .comparison-side.after .comparison-list li::before {
+        .comparison-card.after .comparison-list li::before {
             content: '✓';
-            color: #27ae60;
+            color: var(--success-green);
         }
 
-        /* 客戶見證 */
-        .testimonials {
-            padding: 6rem 6%;
-            background: white;
+        /* 客戶見證 - 新增 */
+        .testimonials-section {
+            padding: 6rem 5%;
         }
 
-        .testimonial-grid {
-            max-width: 1300px;
-            margin: 0 auto;
+        .testimonials-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 3rem;
@@ -302,595 +428,582 @@
         }
 
         .testimonial-card {
-            background: var(--soft-cream);
-            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 58, 138, 0.2));
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(249, 115, 22, 0.2);
+            border-radius: 25px;
             padding: 3rem;
+            transition: all 0.4s ease;
             position: relative;
-            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 10rem;
+            color: rgba(249, 115, 22, 0.1);
+            font-family: serif;
+            line-height: 1;
         }
 
         .testimonial-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .quote-mark {
-            font-size: 4rem;
-            color: var(--warm-orange);
-            opacity: 0.3;
-            line-height: 0;
-            margin-bottom: 1rem;
+            transform: translateY(-10px);
+            border-color: var(--accent-orange);
+            box-shadow: 0 20px 50px rgba(249, 115, 22, 0.2);
         }
 
         .testimonial-text {
             font-size: 1.15rem;
-            color: var(--text-dark);
             line-height: 1.9;
+            color: var(--text-primary);
             margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
         .testimonial-author {
             display: flex;
             align-items: center;
             gap: 1.5rem;
+            border-top: 1px solid rgba(249, 115, 22, 0.2);
+            padding-top: 1.5rem;
         }
 
         .author-avatar {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--warm-orange), var(--deep-teal));
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
             color: white;
             font-weight: 700;
+            flex-shrink: 0;
         }
 
         .author-info h4 {
             font-weight: 700;
-            color: var(--primary-navy);
+            color: var(--text-primary);
             margin-bottom: 0.3rem;
         }
 
         .author-info p {
-            color: var(--text-light);
+            color: var(--text-secondary);
             font-size: 0.95rem;
         }
 
-        /* 成功數據 */
-        .success-stats {
-            padding: 6rem 6%;
-            background: var(--light-grey);
+        .highlight-number {
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+
+        /* 成功數據 - 新增 */
+        .stats-showcase {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 30px;
+            padding: 4rem;
+            margin: 4rem 0;
         }
 
         .stats-grid {
-            max-width: 1300px;
-            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 3rem;
-            margin-top: 4rem;
+            margin-top: 3rem;
         }
 
         .stat-card {
             text-align: center;
-            padding: 2rem;
-            background: white;
-            border-radius: 15px;
-            transition: all 0.3s ease;
+            padding: 2.5rem 1.5rem;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(249, 115, 22, 0.2);
+            transition: all 0.4s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px);
+            border-color: var(--accent-orange);
+            box-shadow: 0 15px 40px rgba(249, 115, 22, 0.3);
         }
 
-        .stat-number {
+        .stat-card .big-number {
             font-size: 3.5rem;
             font-weight: 900;
-            color: var(--warm-orange);
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
-            font-family: 'Noto Serif TC', serif;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .stat-label {
+        .stat-card .stat-title {
             font-size: 1.1rem;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .stat-description {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-top: 0.5rem;
-        }
-
-        /* 案例展示 */
-        .case-studies {
-            padding: 6rem 6%;
-            background: white;
-        }
-
-        .case-grid {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: grid;
-            gap: 4rem;
-            margin-top: 4rem;
-        }
-
-        .case-item {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 4rem;
-            align-items: center;
-            padding: 3rem;
-            background: var(--soft-cream);
-            border-radius: 25px;
-            transition: all 0.4s ease;
-        }
-
-        .case-item:nth-child(even) {
-            grid-template-columns: 1.2fr 1fr;
-        }
-
-        .case-item:hover {
-            transform: translateX(10px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-        }
-
-        .case-visual {
-            background: linear-gradient(135deg, var(--deep-teal), var(--warm-orange));
-            border-radius: 20px;
-            padding: 3rem;
-            color: white;
-            text-align: center;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .case-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .case-metric {
-            font-size: 3rem;
-            font-weight: 900;
-            margin: 1rem 0;
-        }
-
-        .case-content h3 {
-            font-size: 2rem;
-            color: var(--primary-navy);
-            margin-bottom: 1rem;
             font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
 
-        .case-industry {
-            display: inline-block;
-            padding: 0.4rem 1rem;
-            background: var(--warm-orange);
-            color: white;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .case-content p {
-            color: var(--text-light);
-            line-height: 1.9;
-            margin-bottom: 1.5rem;
-        }
-
-        .case-results {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .result-item {
-            padding: 1rem;
-            background: white;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .result-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--warm-orange);
-        }
-
-        .result-label {
+        .stat-card .stat-desc {
             font-size: 0.9rem;
-            color: var(--text-light);
-            margin-top: 0.3rem;
+            color: var(--text-secondary);
         }
 
-        /* 服務方案 */
-        .pricing-section {
-            padding: 6rem 6%;
-            background: var(--light-grey);
+        /* 痛點解決方案 */
+        .pain-points {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(249, 115, 22, 0.05));
+            border-radius: 30px;
+            padding: 4rem;
         }
 
-        .pricing-grid {
-            max-width: 1300px;
-            margin: 0 auto;
+        .pain-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2.5rem;
+        }
+
+        .pain-card {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: 16px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pain-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-cyan));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .pain-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .pain-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(249, 115, 22, 0.2);
+        }
+
+        .pain-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pain-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-orange);
+        }
+
+        .pain-description {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* 團隊背景 */
+        .team-section {
+            background: var(--surface);
+            border-radius: 30px;
+            padding: 4rem;
             margin-top: 4rem;
         }
 
+        .company-logos {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+            align-items: center;
+        }
+
+        .company-logo {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(249, 115, 22, 0.1);
+        }
+
+        .company-logo:hover {
+            background: rgba(249, 115, 22, 0.1);
+            border-color: var(--accent-orange);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+
+        .vision-mission {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .vision-card, .mission-card {
+            padding: 2.5rem;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 16px;
+            border-left: 4px solid var(--accent-cyan);
+        }
+
+        .mission-card {
+            background: rgba(249, 115, 22, 0.1);
+            border-left-color: var(--accent-orange);
+        }
+
+        .vision-card h3, .mission-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .mission-card h3 {
+            color: var(--accent-orange);
+        }
+
+        /* 服務方案 */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
         .pricing-card {
-            background: white;
-            border-radius: 25px;
-            padding: 3rem 2.5rem;
+            background: var(--surface);
+            padding: 3rem 2rem;
+            border-radius: 20px;
             text-align: center;
             transition: all 0.4s ease;
-            border: 3px solid transparent;
-            position: relative;
+            border: 2px solid transparent;
         }
 
         .pricing-card.featured {
-            border-color: var(--warm-orange);
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(6, 182, 212, 0.2));
+            border-color: var(--accent-orange);
             transform: scale(1.05);
-            box-shadow: 0 20px 50px rgba(255, 107, 53, 0.2);
         }
 
         .pricing-card:hover {
             transform: translateY(-10px) scale(1.02);
-        }
-
-        .featured-badge {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--warm-orange);
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
+            border-color: var(--accent-cyan);
         }
 
         .plan-name {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary-navy);
             margin-bottom: 1rem;
+            color: var(--accent-orange);
         }
 
         .plan-price {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 900;
-            color: var(--warm-orange);
+            font-family: 'JetBrains Mono', monospace;
             margin-bottom: 0.5rem;
-            font-family: 'Noto Serif TC', serif;
         }
 
         .plan-price span {
             font-size: 1.2rem;
-            color: var(--text-light);
-            font-weight: 400;
-        }
-
-        .plan-description {
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
+            color: var(--text-secondary);
         }
 
         .plan-features {
             list-style: none;
-            text-align: left;
             margin: 2rem 0;
+            text-align: left;
         }
 
         .plan-features li {
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--light-grey);
-            display: flex;
-            align-items: flex-start;
-            gap: 0.8rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
         }
 
         .plan-features li::before {
-            content: '✓';
-            color: var(--warm-orange);
+            content: '✓ ';
+            color: var(--accent-cyan);
             font-weight: 700;
-            font-size: 1.3rem;
-            flex-shrink: 0;
+            margin-right: 0.5rem;
         }
 
-        .cta-button {
-            width: 100%;
-            padding: 1.2rem;
-            background: var(--warm-orange);
-            color: white;
-            border: none;
+        /* 聯絡表單 */
+        .contact-section {
+            background: linear-gradient(135deg, var(--surface), var(--surface-light));
             border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
+            padding: 4rem;
+            margin-top: 4rem;
         }
 
-        .cta-button:hover {
-            background: #e85d2a;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .cta-button.secondary {
-            background: white;
-            color: var(--warm-orange);
-            border: 2px solid var(--warm-orange);
-        }
-
-        .cta-button.secondary:hover {
-            background: var(--warm-orange);
-            color: white;
-        }
-
-        /* 最終CTA */
-        .final-cta {
-            padding: 6rem 6%;
-            background: linear-gradient(135deg, var(--warm-orange) 0%, #ff8c5a 100%);
-            color: white;
-            text-align: center;
-        }
-
-        .final-cta h2 {
-            font-size: 3rem;
-            font-weight: 900;
+        .form-group {
             margin-bottom: 1.5rem;
-            font-family: 'Noto Serif TC', serif;
         }
 
-        .final-cta p {
-            font-size: 1.3rem;
-            margin-bottom: 3rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0.95;
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
         }
 
-        .final-cta-buttons {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-dark);
+            border: 2px solid rgba(249, 115, 22, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Noto Sans TC', sans-serif;
+            transition: all 0.3s ease;
         }
 
-        .final-cta-buttons .cta-button {
-            width: auto;
-            padding: 1.2rem 3rem;
-            background: white;
-            color: var(--warm-orange);
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
         }
 
-        .final-cta-buttons .cta-button:hover {
-            background: var(--primary-navy);
-            color: white;
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
         }
 
         /* Footer */
         footer {
-            background: var(--primary-navy);
-            color: white;
-            padding: 4rem 6% 2rem;
-        }
-
-        .footer-content {
-            max-width: 1300px;
-            margin: 0 auto;
             text-align: center;
-        }
-
-        .footer-trust {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .footer-trust h3 {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.8;
-        }
-
-        .company-badges {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .company-badge {
-            padding: 0.8rem 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            font-size: 0.95rem;
-        }
-
-        .footer-bottom {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.7;
-            font-size: 0.9rem;
+            padding: 3rem 5%;
+            border-top: 1px solid rgba(249, 115, 22, 0.1);
+            color: var(--text-secondary);
         }
 
         /* 響應式設計 */
         @media (max-width: 1024px) {
-            .journey-container,
-            .testimonial-grid,
-            .pricing-grid {
+            .hero-content,
+            .comparison-grid,
+            .testimonials-grid {
                 grid-template-columns: 1fr;
             }
 
-            .comparison-grid,
-            .case-item,
-            .case-item:nth-child(even) {
+            .pain-grid,
+            .pricing-grid,
+            .journey-timeline {
+                grid-template-columns: 1fr;
+            }
+
+            .company-logos {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .vision-mission {
                 grid-template-columns: 1fr;
             }
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-
-            .hero-story h1 {
-                font-size: 2.5rem;
-            }
         }
 
         @media (max-width: 768px) {
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats,
             .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .hero-story h1 {
-                font-size: 2rem;
-            }
-
-            .section-header h2 {
+            .section-title {
                 font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
+    <div class="bg-grid"></div>
+
     <!-- 導航列 -->
     <nav>
         <div class="container">
-            <div class="logo">智動流</div>
-            <a href="#pricing" class="nav-cta">免費諮詢</a>
+            <div class="logo">智動流 AI</div>
+            <a href="#pricing" class="cta-button">立即開始</a>
         </div>
     </nav>
 
-    <!-- Hero 故事開場 -->
-    <section class="hero-story">
-        <div class="hero-content-story">
-            <h1>
-                還在為<span class="highlight">重複性工作</span>浪費時間？<br>
-                是時候讓系統為你工作了
-            </h1>
-            <p class="subtitle">
-                我們曾在鴻海、友達、群創等大企業，看過自動化如何改變一切。<br>
-                現在，我們要把這份經驗，帶給每一家需要效率的中小企業。
-            </p>
-            <a href="#journey" class="nav-cta" style="font-size: 1.2rem; padding: 1.2rem 3rem;">
-                看看其他企業的轉變 →
-            </a>
+    <!-- Hero 區塊 -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>
+                    讓中小企業<br>
+                    <span class="highlight">沒有難用的系統</span>
+                </h1>
+                <p>
+                    由上市櫃企業資深團隊打造，為中小企業量身定制的 N8N 自動化解決方案。
+                    用 AI 點亮轉型之路，讓每個流程都自動運轉。
+                </p>
+                <a href="#journey" class="cta-button" style="font-size: 1.2rem; padding: 1rem 3rem;">
+                    看看其他企業的轉變 →
+                </a>
+
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">工作流自動化率</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">70h</div>
+                        <div class="stat-label">每月節省工時</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">全天候運行</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-visual">
+                <div class="workflow-nodes">
+                    <div class="workflow-node">
+                        <div class="node-title">📧 電子郵件觸發</div>
+                        <div class="node-desc">自動監控客戶郵件，即時啟動流程</div>
+                    </div>
+                    <div class="workflow-node">
+                        <div class="node-title">🤖 AI 智能分析</div>
+                        <div class="node-desc">使用 AI 提取關鍵資訊與分類</div>
+                    </div>
+                    <div class="workflow-node">
+                        <div class="node-title">💾 資料庫同步</div>
+                        <div class="node-desc">自動更新 CRM / ERP 系統</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- 客戶旅程 -->
-    <section class="customer-journey" id="journey">
-        <div class="section-header">
-            <h2>從混亂到高效，只需要三個階段</h2>
-            <p>超過 50 家中小企業已經走過這段轉型旅程，現在輪到你了</p>
-        </div>
-
-        <div class="journey-container">
-            <div class="journey-card">
-                <span class="journey-phase">第一階段：發現痛點</span>
-                <h3>每天都在做重複的事</h3>
-                <p>
-                    「我每天花 3 小時整理訂單資料，再把它們一筆筆輸入進 ERP。
-                    有時候一個錯字，就要全部重來。員工抱怨，我也很無奈。」
-                </p>
-                <div class="journey-quote">
-                    — 某製造業老闆的真實心聲
-                </div>
+    <section id="journey">
+        <div class="journey-section">
+            <div class="section-title">從混亂到高效，只需要三個階段</div>
+            <div class="section-subtitle">
+                超過 50 家中小企業已經走過這段轉型旅程，現在輪到你了
             </div>
 
-            <div class="journey-card">
-                <span class="journey-phase">第二階段：開始自動化</span>
-                <h3>系統開始幫我工作</h3>
-                <p>
-                    「導入 N8N 後，訂單一進來就自動分類、自動進 ERP、自動通知倉管。
-                    我的工作時間從 3 小時變成 10 分鐘檢查就好。」
-                </p>
-                <div class="journey-quote">
-                    — 導入後第一個月的回饋
+            <div class="journey-timeline">
+                <div class="journey-step">
+                    <span class="journey-phase">第一階段</span>
+                    <h3>每天都在做重複的事</h3>
+                    <p>
+                        「我每天花 3 小時整理訂單資料，再把它們一筆筆輸入進 ERP。
+                        有時候一個錯字，就要全部重來。員工抱怨，我也很無奈。」
+                    </p>
+                    <div class="journey-quote">
+                        — 某製造業老闆的真實心聲
+                    </div>
                 </div>
-            </div>
 
-            <div class="journey-card">
-                <span class="journey-phase">第三階段：全面優化</span>
-                <h3>把時間留給重要的事</h3>
-                <p>
-                    「現在我有更多時間拜訪客戶、思考策略。團隊士氣也提升了，
-                    因為他們不用再做那些無聊的重複工作。營收成長 30%。」
-                </p>
-                <div class="journey-quote">
-                    — 導入後六個月的成果
+                <div class="journey-step">
+                    <span class="journey-phase">第二階段</span>
+                    <h3>系統開始幫我工作</h3>
+                    <p>
+                        「導入 N8N 後，訂單一進來就自動分類、自動進 ERP、自動通知倉管。
+                        我的工作時間從 3 小時變成 10 分鐘檢查就好。」
+                    </p>
+                    <div class="journey-quote">
+                        — 導入後第一個月的回饋
+                    </div>
+                </div>
+
+                <div class="journey-step">
+                    <span class="journey-phase">第三階段</span>
+                    <h3>把時間留給重要的事</h3>
+                    <p>
+                        「現在我有更多時間拜訪客戶、思考策略。團隊士氣也提升了，
+                        因為他們不用再做那些無聊的重複工作。營收成長 30%。」
+                    </p>
+                    <div class="journey-quote">
+                        — 導入後六個月的成果
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 使用前後對比 -->
-    <section class="before-after">
-        <div class="section-header" style="color: white;">
-            <h2>導入自動化前後，差別有多大？</h2>
-            <p style="color: rgba(255,255,255,0.8);">真實企業的對比數據，讓你看見改變的力量</p>
-        </div>
-
-        <div class="comparison-grid">
-            <div class="comparison-side before">
-                <span class="comparison-label before-label">導入前</span>
-                <h3>手動處理的困境</h3>
-                <ul class="comparison-list">
-                    <li>每天花 2-4 小時處理資料輸入</li>
-                    <li>人為錯誤率高達 15%</li>
-                    <li>客戶詢問要等 24 小時才能回覆</li>
-                    <li>報表整理需要 3 天時間</li>
-                    <li>員工加班處理行政工作</li>
-                    <li>系統之間無法溝通</li>
-                </ul>
+    <section class="before-after-section">
+        <div class="comparison-container">
+            <div class="section-title">導入自動化前後，差別有多大？</div>
+            <div class="section-subtitle" style="color: var(--text-secondary);">
+                真實企業的對比數據，讓你看見改變的力量
             </div>
 
-            <div class="comparison-side after">
-                <span class="comparison-label after-label">導入後</span>
-                <h3>自動化的效率</h3>
-                <ul class="comparison-list">
-                    <li>資料自動同步，只需 10 分鐘檢查</li>
-                    <li>錯誤率降至 1% 以下</li>
-                    <li>客戶詢問 5 分鐘內自動回覆</li>
-                    <li>報表即時產生，隨時查看</li>
-                    <li>員工準時下班，專注核心業務</li>
-                    <li>所有系統無縫整合</li>
-                </ul>
+            <div class="comparison-grid">
+                <div class="comparison-card before">
+                    <span class="comparison-label before-label">導入前</span>
+                    <h3>手動處理的困境</h3>
+                    <ul class="comparison-list">
+                        <li>每天花 2-4 小時處理資料輸入</li>
+                        <li>人為錯誤率高達 15%</li>
+                        <li>客戶詢問要等 24 小時才能回覆</li>
+                        <li>報表整理需要 3 天時間</li>
+                        <li>員工加班處理行政工作</li>
+                        <li>系統之間無法溝通</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card after">
+                    <span class="comparison-label after-label">導入後</span>
+                    <h3>自動化的效率</h3>
+                    <ul class="comparison-list">
+                        <li>資料自動同步，只需 10 分鐘檢查</li>
+                        <li>錯誤率降至 1% 以下</li>
+                        <li>客戶詢問 5 分鐘內自動回覆</li>
+                        <li>報表即時產生，隨時查看</li>
+                        <li>員工準時下班，專注核心業務</li>
+                        <li>所有系統無縫整合</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- 客戶見證 -->
-    <section class="testimonials">
-        <div class="section-header">
-            <h2>聽聽他們怎麼說</h2>
-            <p>真實客戶的真實回饋，沒有誇大，只有事實</p>
+    <section class="testimonials-section">
+        <div class="section-title">聽聽他們怎麼說</div>
+        <div class="section-subtitle">
+            真實客戶的真實回饋，沒有誇大，只有事實
         </div>
 
-        <div class="testimonial-grid">
+        <div class="testimonials-grid">
             <div class="testimonial-card">
-                <div class="quote-mark">"</div>
                 <p class="testimonial-text">
                     「我們是一家 20 人的貿易公司，之前每天要手動處理上百封詢價信。
                     現在 N8N 自動幫我分類、建檔、回覆，我們業務團隊可以專心開發新客戶。
-                    半年來營收成長 40%，這是我沒想到的。」
+                    半年來營收成長 <span class="highlight-number">40%</span>，這是我沒想到的。」
                 </p>
                 <div class="testimonial-author">
                     <div class="author-avatar">陳</div>
@@ -902,11 +1015,10 @@
             </div>
 
             <div class="testimonial-card">
-                <div class="quote-mark">"</div>
                 <p class="testimonial-text">
                     「我們製造業最怕出錯，以前人工輸入訂單常常打錯規格，
                     造成生產線損失。導入自動化後，錯誤率幾乎是零，
-                    而且交期準確率提升到 98%。客戶滿意度大幅提高。」
+                    而且交期準確率提升到 <span class="highlight-number">98%</span>。客戶滿意度大幅提高。」
                 </p>
                 <div class="testimonial-author">
                     <div class="author-avatar">林</div>
@@ -918,11 +1030,10 @@
             </div>
 
             <div class="testimonial-card">
-                <div class="quote-mark">"</div>
                 <p class="testimonial-text">
                     「最讓我驚訝的是價格。我們之前詢問過其他廠商，
                     報價都是百萬起跳。智動流團隊用 N8N 幫我們做到一樣的效果，
-                    成本只有十分之一。而且他們團隊真的很專業，都是大廠出來的。」
+                    成本只有 <span class="highlight-number">十分之一</span>。而且他們團隊真的很專業，都是大廠出來的。」
                 </p>
                 <div class="testimonial-author">
                     <div class="author-avatar">王</div>
@@ -934,11 +1045,10 @@
             </div>
 
             <div class="testimonial-card">
-                <div class="quote-mark">"</div>
                 <p class="testimonial-text">
                     「我們公司只有 8 個人，沒有 IT 部門。
                     原本很擔心系統出問題沒人會修，但智動流提供的技術支援非常即時，
-                    通常半小時內就能解決問題。讓我很放心。」
+                    通常 <span class="highlight-number">半小時</span> 內就能解決問題。讓我很放心。」
                 </p>
                 <div class="testimonial-author">
                     <div class="author-avatar">張</div>
@@ -952,138 +1062,114 @@
     </section>
 
     <!-- 成功數據 -->
-    <section class="success-stats">
-        <div class="section-header">
-            <h2>用數據說話</h2>
-            <p>這些是我們客戶的真實成果，不是空口承諾</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">70+</div>
-                <div class="stat-label">小時</div>
-                <div class="stat-description">每月平均節省工時</div>
+    <section>
+        <div class="stats-showcase">
+            <div class="section-title">用數據說話</div>
+            <div class="section-subtitle">
+                這些是我們客戶的真實成果，不是空口承諾
             </div>
 
-            <div class="stat-card">
-                <div class="stat-number">95%</div>
-                <div class="stat-label">自動化率</div>
-                <div class="stat-description">流程自動化比例</div>
-            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="big-number">70+</div>
+                    <div class="stat-title">小時</div>
+                    <div class="stat-desc">每月平均節省工時</div>
+                </div>
 
-            <div class="stat-card">
-                <div class="stat-number">1%</div>
-                <div class="stat-label">錯誤率</div>
-                <div class="stat-description">從 15% 降至 1%</div>
-            </div>
+                <div class="stat-card">
+                    <div class="big-number">95%</div>
+                    <div class="stat-title">自動化率</div>
+                    <div class="stat-desc">流程自動化比例</div>
+                </div>
 
-            <div class="stat-card">
-                <div class="stat-number">3 個月</div>
-                <div class="stat-label">回本週期</div>
-                <div class="stat-description">平均投資回收期</div>
+                <div class="stat-card">
+                    <div class="big-number">1%</div>
+                    <div class="stat-title">錯誤率</div>
+                    <div class="stat-desc">從 15% 降至 1%</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="big-number">3 個月</div>
+                    <div class="stat-title">回本週期</div>
+                    <div class="stat-desc">平均投資回收期</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- 案例展示 -->
-    <section class="case-studies">
-        <div class="section-header">
-            <h2>成功案例</h2>
-            <p>看看這些企業如何透過自動化，實現效率躍升</p>
+    <!-- 痛點解決方案 -->
+    <section>
+        <div class="section-title">解決中小企業的三大痛點</div>
+        <div class="section-subtitle">
+            我們深知中小企業在數位轉型路上的挑戰，提供最適合的自動化解決方案
         </div>
 
-        <div class="case-grid">
-            <div class="case-item">
-                <div class="case-visual">
-                    <div class="case-icon">📧</div>
-                    <div>客服自動化</div>
-                    <div class="case-metric">90%</div>
-                    <div>客服工作量減少</div>
+        <div class="pain-points">
+            <div class="pain-grid">
+                <div class="pain-card">
+                    <div class="pain-icon">⏱️</div>
+                    <div class="pain-title">重複性工作佔據大量時間</div>
+                    <div class="pain-description">
+                        每天花費數小時處理資料輸入、報表整理、郵件回覆等重複性工作。
+                        我們的自動化流程讓您專注於核心業務，將時間投資在真正重要的事情上。
+                    </div>
                 </div>
-                <div class="case-content">
-                    <span class="case-industry">電商產業</span>
-                    <h3>從每天 200 封客服信到自動處理</h3>
-                    <p>
-                        某電商平台每天收到大量重複性詢問（訂單查詢、退換貨流程等），
-                        客服團隊疲於應付。我們設計 N8N 工作流，
-                        自動分類郵件並根據關鍵字發送標準回覆，複雜問題才轉人工處理。
-                    </p>
-                    <div class="case-results">
-                        <div class="result-item">
-                            <div class="result-value">5 分鐘</div>
-                            <div class="result-label">平均回覆時間</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-value">客滿↑35%</div>
-                            <div class="result-label">滿意度提升</div>
-                        </div>
+
+                <div class="pain-card">
+                    <div class="pain-icon">💰</div>
+                    <div class="pain-title">系統整合成本高昂</div>
+                    <div class="pain-description">
+                        傳統系統整合動輒數十萬甚至百萬費用，中小企業難以負擔。
+                        N8N 開源平台搭配我們的專業服務，以合理成本實現企業級自動化。
+                    </div>
+                </div>
+
+                <div class="pain-card">
+                    <div class="pain-icon">🔧</div>
+                    <div class="pain-title">缺乏技術人才維護系統</div>
+                    <div class="pain-description">
+                        聘請專職 IT 人員成本高，外包廠商響應慢。
+                        我們提供全方位技術支援與定期維護，確保系統穩定運行，讓您無後顧之憂。
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="case-item">
-                <div class="case-content">
-                    <span class="case-industry">製造業</span>
-                    <h3>訂單自動同步 ERP，零錯誤率</h3>
-                    <p>
-                        傳統製造業透過 Email 接收訂單後，需人工輸入 ERP 系統，
-                        經常因規格打錯造成生產錯誤。我們建立自動化流程，
-                        訂單郵件自動解析並寫入 ERP，同步通知生產與倉管。
-                    </p>
-                    <div class="case-results">
-                        <div class="result-item">
-                            <div class="result-value">0 次</div>
-                            <div class="result-label">錯誤次數/月</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-value">3 小時</div>
-                            <div class="result-label">每日節省時間</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="case-visual">
-                    <div class="case-icon">⚙️</div>
-                    <div>ERP 整合</div>
-                    <div class="case-metric">100%</div>
-                    <div>準確率提升</div>
-                </div>
+    <!-- 團隊背景 -->
+    <section>
+        <div class="team-section">
+            <div class="section-title">來自業界頂尖企業的專業團隊</div>
+            <div class="section-subtitle">
+                我們的成員來自台灣最具代表性的上市櫃企業，擁有豐富的自動化與數位轉型實戰經驗
             </div>
 
-            <div class="case-item">
-                <div class="case-visual">
-                    <div class="case-icon">📊</div>
-                    <div>報表自動化</div>
-                    <div class="case-metric">即時</div>
-                    <div>數據更新速度</div>
+            <div class="company-logos">
+                <div class="company-logo">鴻海集團</div>
+                <div class="company-logo">友達集團</div>
+                <div class="company-logo">群創集團</div>
+                <div class="company-logo">台塑集團</div>
+                <div class="company-logo">勝美達集團</div>
+            </div>
+
+            <div class="vision-mission">
+                <div class="vision-card">
+                    <h3>🎯 我們的願景</h3>
+                    <p>讓中小企業沒有難用的系統</p>
                 </div>
-                <div class="case-content">
-                    <span class="case-industry">貿易公司</span>
-                    <h3>即時業績儀表板，隨時掌握營運</h3>
-                    <p>
-                        原本每週製作業績報表需要財務人員花 2 天時間整理 Excel，
-                        數據還是落後一週。現在 N8N 每小時自動抓取銷售數據，
-                        更新 Google Sheets 儀表板，老闆隨時都能看到最新狀況。
-                    </p>
-                    <div class="case-results">
-                        <div class="result-item">
-                            <div class="result-value">24/7</div>
-                            <div class="result-label">即時監控</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-value">決策↑50%</div>
-                            <div class="result-label">反應速度</div>
-                        </div>
-                    </div>
+                <div class="mission-card">
+                    <h3>🚀 我們的使命</h3>
+                    <p>用 AI 點亮中小企業轉型之路</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 服務方案 -->
-    <section class="pricing-section" id="pricing">
-        <div class="section-header">
-            <h2>選擇最適合你的起步方案</h2>
-            <p>無論規模大小，我們都有適合的解決方案</p>
+    <section id="pricing">
+        <div class="section-title">選擇最適合您的方案</div>
+        <div class="section-subtitle">
+            彈性方案設計，從入門到企業級，滿足不同階段的自動化需求
         </div>
 
         <div class="pricing-grid">
@@ -1093,37 +1179,31 @@
                     NT$ 15,000
                     <span>/月</span>
                 </div>
-                <p class="plan-description">適合剛開始自動化的小型團隊</p>
                 <ul class="plan-features">
                     <li>3 個自動化工作流</li>
-                    <li>Email、試算表基礎整合</li>
+                    <li>基礎系統整合（Email、試算表）</li>
                     <li>每月 5 小時技術支援</li>
-                    <li>線上教學文件</li>
+                    <li>流程設計諮詢</li>
+                    <li>線上教學與文件</li>
                 </ul>
-                <button class="cta-button" onclick="selectPlan('入門方案', 15000)">
-                    開始使用
-                </button>
+                <button class="cta-button" onclick="selectPlan('入門方案', 15000)">選擇方案</button>
             </div>
 
             <div class="pricing-card featured">
-                <span class="featured-badge">最受歡迎</span>
                 <div class="plan-name">專業方案</div>
                 <div class="plan-price">
                     NT$ 35,000
                     <span>/月</span>
                 </div>
-                <p class="plan-description">適合需要深度整合的成長型企業</p>
                 <ul class="plan-features">
                     <li>10 個自動化工作流</li>
-                    <li>CRM、ERP、資料庫整合</li>
+                    <li>進階系統整合（CRM、ERP、資料庫）</li>
                     <li>每月 15 小時技術支援</li>
-                    <li>AI 智能流程優化</li>
-                    <li>每季流程健檢</li>
+                    <li>AI 智能流程設計</li>
                     <li>優先客服響應</li>
+                    <li>每季流程優化檢視</li>
                 </ul>
-                <button class="cta-button" onclick="selectPlan('專業方案', 35000)">
-                    立即升級
-                </button>
+                <button class="cta-button" onclick="selectPlan('專業方案', 35000)">選擇方案</button>
             </div>
 
             <div class="pricing-card">
@@ -1131,58 +1211,67 @@
                 <div class="plan-price">
                     客製報價
                 </div>
-                <p class="plan-description">為大型企業量身打造</p>
                 <ul class="plan-features">
                     <li>無限制工作流數量</li>
                     <li>全方位系統整合</li>
-                    <li>專屬技術團隊</li>
+                    <li>專屬技術團隊支援</li>
+                    <li>客製化 AI 解決方案</li>
                     <li>24/7 監控與維護</li>
-                    <li>定期現場訪視</li>
+                    <li>定期現場訪視與優化</li>
                     <li>專屬帳戶經理</li>
                 </ul>
-                <button class="cta-button secondary" onclick="contactEnterprise()">
-                    聯絡我們
-                </button>
+                <button class="cta-button" onclick="contactEnterprise()">聯絡我們</button>
             </div>
         </div>
     </section>
 
-    <!-- 最終 CTA -->
-    <section class="final-cta">
-        <h2>準備好讓系統為你工作了嗎？</h2>
-        <p>
-            加入超過 50 家已經成功轉型的中小企業行列<br>
-            讓我們幫你找回被浪費的時間
-        </p>
-        <div class="final-cta-buttons">
-            <button class="cta-button" onclick="window.location.href='#pricing'">
-                查看方案與價格
-            </button>
-            <button class="cta-button" onclick="contactEnterprise()">
-                免費諮詢 30 分鐘
-            </button>
+    <!-- 聯絡表單 -->
+    <section>
+        <div class="contact-section">
+            <div class="section-title">立即開始您的自動化旅程</div>
+            <div class="section-subtitle">
+                填寫表單，我們將在 24 小時內與您聯繫，提供免費諮詢服務
+            </div>
+
+            <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="company">公司名稱 *</label>
+                    <input type="text" id="company" name="company" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">聯絡人姓名 *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">電子郵件 *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">聯絡電話</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">您的需求說明</label>
+                    <textarea id="message" name="message" placeholder="請簡述您希望自動化的流程或遇到的問題..."></textarea>
+                </div>
+
+                <button type="submit" class="cta-button" style="width: 100%; font-size: 1.1rem;">
+                    送出諮詢需求
+                </button>
+            </form>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-content">
-            <div class="footer-trust">
-                <h3>我們的團隊來自</h3>
-                <div class="company-badges">
-                    <span class="company-badge">鴻海集團</span>
-                    <span class="company-badge">友達集團</span>
-                    <span class="company-badge">群創集團</span>
-                    <span class="company-badge">台塑集團</span>
-                    <span class="company-badge">勝美達集團</span>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 智動流 AI 自動化解決方案</p>
-                <p style="margin-top: 0.5rem;">讓中小企業沒有難用的系統 | 用 AI 點亮轉型之路</p>
-            </div>
-        </div>
+        <p>&copy; 2025 智動流 AI 自動化解決方案 | 讓中小企業沒有難用的系統</p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            團隊成員來自：鴻海集團 | 友達集團 | 群創集團 | 台塑集團 | 日商勝美達集團
+        </p>
     </footer>
 
     <script>
@@ -1190,7 +1279,7 @@
         function selectPlan(planName, price) {
             alert(`您選擇了 ${planName}\n\n我們將為您導向安全的支付頁面。\n實際部署時會串接 Stripe Payment Links。`);
             
-            // 實際使用時替換成您的 Stripe Payment Link
+            // 實際使用時的程式碼範例：
             // if (planName === '入門方案') {
             //     window.location.href = 'YOUR_STRIPE_PAYMENT_LINK_FOR_STARTER';
             // } else if (planName === '專業方案') {
@@ -1200,7 +1289,37 @@
 
         // 企業方案聯絡
         function contactEnterprise() {
-            alert('感謝您的興趣！\n\n請撥打電話：0912-345-678\n或發送 Email：contact@yourcompany.com\n\n我們將在 24 小時內與您聯繫。');
+            document.querySelector('#contactForm').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('#message').value = '我對企業方案有興趣，希望了解更多細節。';
+        }
+
+        // 表單提交處理
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            console.log('表單資料:', data);
+            
+            alert('感謝您的諮詢！\n\n我們已收到您的資料，將在 24 小時內與您聯繫。\n\n實際部署時會串接到您的 N8N Webhook 或 Email 通知系統。');
+            
+            event.target.reset();
+            
+            // 實際使用時的程式碼範例：
+            // fetch('YOUR_N8N_WEBHOOK_URL', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(data)
+            // })
+            // .then(response => response.json())
+            // .then(result => {
+            //     alert('感謝您的諮詢！我們將盡快與您聯繫。');
+            //     event.target.reset();
+            // })
+            // .catch(error => {
+            //     alert('提交失敗，請稍後再試或直接來電聯繫。');
+            // });
         }
 
         // 平滑滾動
@@ -1214,7 +1333,7 @@
             });
         });
 
-        // 滾動動畫
+        // 滾動動畫觸發
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -100px 0px'
@@ -1229,10 +1348,11 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.journey-card, .testimonial-card, .case-item, .stat-card').forEach(el => {
+        // 為需要動畫的元素添加觀察
+        document.querySelectorAll('.pain-card, .pricing-card, .journey-step, .testimonial-card, .stat-card').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.8s ease';
+            el.style.transition = 'all 0.6s ease';
             observer.observe(el);
         });
     </script>
