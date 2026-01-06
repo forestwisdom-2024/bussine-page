@@ -1456,64 +1456,93 @@
     </footer>
 
     <script>
-        // 方案選擇功能
-        function selectPlan(planName, price) {
-            alert(`您選擇了 ${planName}\n\n我們將為您導向安全的支付頁面。\n實際部署時會串接 Stripe Payment Links。`);
-        }
+    // 1. 方案選擇功能：優化為「滾動並預填表單」
+    function selectPlan(planName, price) {
+        // 取得表單與訊息欄位
+        const contactSection = document.querySelector('#contactForm');
+        const messageBox = document.querySelector('#message');
+        
+        // 組合預填訊息
+        const prefillMessage = `你好，我對「${planName}」感興趣 (預算: NT$ ${price}/月)。\n我想了解更多付款方式與詳細導入流程。`;
+        
+        // 填入訊息
+        messageBox.value = prefillMessage;
+        
+        // 平滑滾動到表單位置
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // 視覺回饋：讓訊息框閃爍一下提醒使用者
+        messageBox.style.transition = 'background-color 0.3s';
+        messageBox.style.backgroundColor = 'rgba(249, 115, 22, 0.2)';
+        setTimeout(() => {
+            messageBox.style.backgroundColor = 'var(--primary-dark)';
+        }, 500);
+    }
 
-        // 企業方案聯絡
-        function contactEnterprise() {
-            document.querySelector('#contactForm').scrollIntoView({ behavior: 'smooth' });
-            document.querySelector('#message').value = '我對企業方案有興趣，希望了解更多細節。';
-        }
+    // 2. 企業方案聯絡 (維持原樣，但統一邏輯)
+    function contactEnterprise() {
+        const contactSection = document.querySelector('#contactForm');
+        const messageBox = document.querySelector('#message');
+        
+        messageBox.value = '你好，我們是大型企業/機構，有客製化自動化流程的需求，希望能安排顧問諮詢。';
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
-        // 表單提交處理
-        function handleSubmit(event) {
-            event.preventDefault();
+    // 3. 表單提交模擬 (前端展示用)
+    // 注意：這裡先模擬成功，未來我們會在這邊串接 N8N
+    function handleSubmit(event) {
+        event.preventDefault();
+        
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerText;
+        
+        // 鎖定按鈕
+        submitBtn.disabled = true;
+        submitBtn.innerText = '處理中...';
+
+        // 模擬網路延遲
+        setTimeout(() => {
+            // 這裡未來會換成 fetch() 打給 N8N
+            alert('【前端測試成功】\n感謝您的諮詢！\n\n因為目前尚未串接後端，此表單僅為展示。\n未來串接後，這裡會跳轉至付款頁面或發送確認信。');
             
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
-            
-            console.log('表單資料:', data);
-            
-            alert('感謝您的諮詢！\n\n我們已收到您的資料，將在 24 小時內與您聯繫。');
-            
+            // 重置表單與按鈕
             event.target.reset();
-        }
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
+        }, 1000);
+    }
 
-        // 平滑滾動
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
+    // 4. 平滑滾動與動畫偵測 (維持原樣)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
+    });
 
-        // 滾動動畫觸發
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // 為需要動畫的元素添加觀察
-        document.querySelectorAll('.pain-card, .pricing-card, .journey-step, .testimonial-card, .stat-card, .case-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease';
-            observer.observe(el);
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
         });
-    </script>
+    }, observerOptions);
+
+    document.querySelectorAll('.pain-card, .pricing-card, .journey-step, .testimonial-card, .stat-card, .case-item').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+</script>
 </body>
 </html>
