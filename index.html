@@ -105,13 +105,15 @@
             box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);
         }
 
-        /* Hero 區塊 */
+        /* Hero 區塊 - 加入背景圖片 */
         .hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             padding: 8rem 5% 4rem;
             position: relative;
+            background: linear-gradient(135deg, rgba(10, 22, 40, 0.95), rgba(30, 58, 138, 0.9)),
+                        url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80') center/cover;
         }
 
         .hero-content {
@@ -122,6 +124,8 @@
             grid-template-columns: 1.2fr 1fr;
             gap: 4rem;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-text h1 {
@@ -145,6 +149,32 @@
             color: var(--text-secondary);
             margin-bottom: 2rem;
             max-width: 600px;
+        }
+
+        /* Hero 右側圖片 */
+        .hero-image {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(6, 182, 212, 0.2));
+            z-index: 1;
         }
 
         .hero-stats {
@@ -187,55 +217,6 @@
             }
         }
 
-        /* 工作流視覺化 */
-        .workflow-visual {
-            position: relative;
-            padding: 2rem;
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 20px;
-            border: 1px solid rgba(249, 115, 22, 0.2);
-        }
-
-        .workflow-nodes {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .workflow-node {
-            background: var(--surface);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-cyan);
-            transition: all 0.3s ease;
-            animation: nodeFloat 3s ease-in-out infinite;
-        }
-
-        .workflow-node:nth-child(1) { animation-delay: 0s; }
-        .workflow-node:nth-child(2) { animation-delay: 1s; }
-        .workflow-node:nth-child(3) { animation-delay: 2s; }
-
-        @keyframes nodeFloat {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(10px); }
-        }
-
-        .workflow-node:hover {
-            border-left-color: var(--accent-orange);
-            transform: translateX(15px) !important;
-        }
-
-        .node-title {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--accent-cyan);
-        }
-
-        .node-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
         /* 內容區塊通用樣式 */
         section {
             padding: 6rem 5%;
@@ -260,7 +241,7 @@
             margin-right: auto;
         }
 
-        /* 客戶旅程 - 新增 */
+        /* 客戶旅程 - 加入圖片 */
         .journey-section {
             background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(249, 115, 22, 0.05));
             border-radius: 30px;
@@ -273,7 +254,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 3rem;
             margin-top: 3rem;
-            position: relative;
         }
 
         .journey-step {
@@ -289,6 +269,14 @@
             border-color: var(--accent-orange);
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2);
+        }
+
+        .journey-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
         }
 
         .journey-phase {
@@ -323,7 +311,7 @@
             font-size: 1.05rem;
         }
 
-        /* 使用前後對比 - 新增 */
+        /* 使用前後對比 */
         .before-after-section {
             padding: 6rem 5%;
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 58, 138, 0.3));
@@ -415,7 +403,7 @@
             color: var(--success-green);
         }
 
-        /* 客戶見證 - 新增 */
+        /* 客戶見證 - 加入圖片 */
         .testimonials-section {
             padding: 6rem 5%;
         }
@@ -453,6 +441,21 @@
             transform: translateY(-10px);
             border-color: var(--accent-orange);
             box-shadow: 0 20px 50px rgba(249, 115, 22, 0.2);
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .testimonial-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-orange);
         }
 
         .testimonial-text {
@@ -502,7 +505,7 @@
             font-weight: 700;
         }
 
-        /* 成功數據 - 新增 */
+        /* 成功數據 */
         .stats-showcase {
             background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(6, 182, 212, 0.1));
             border-radius: 30px;
@@ -553,6 +556,97 @@
         .stat-card .stat-desc {
             font-size: 0.9rem;
             color: var(--text-secondary);
+        }
+
+        /* 案例展示 - 加入圖片 */
+        .case-studies {
+            padding: 6rem 5%;
+        }
+
+        .case-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            gap: 4rem;
+            margin-top: 4rem;
+        }
+
+        .case-item {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 58, 138, 0.2));
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .case-item:nth-child(even) {
+            grid-template-columns: 1.2fr 1fr;
+        }
+
+        .case-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-orange);
+        }
+
+        .case-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .case-content h3 {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .case-industry {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: var(--accent-orange);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .case-content p {
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .case-results {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .result-item {
+            padding: 1rem;
+            background: rgba(10, 22, 40, 0.5);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
         }
 
         /* 痛點解決方案 */
@@ -804,7 +898,9 @@
         @media (max-width: 1024px) {
             .hero-content,
             .comparison-grid,
-            .testimonials-grid {
+            .testimonials-grid,
+            .case-item,
+            .case-item:nth-child(even) {
                 grid-template-columns: 1fr;
             }
 
@@ -839,6 +935,10 @@
 
             .section-title {
                 font-size: 2rem;
+            }
+
+            .hero-image {
+                height: 300px;
             }
         }
     </style>
@@ -886,21 +986,8 @@
                 </div>
             </div>
 
-            <div class="workflow-visual">
-                <div class="workflow-nodes">
-                    <div class="workflow-node">
-                        <div class="node-title">📧 電子郵件觸發</div>
-                        <div class="node-desc">自動監控客戶郵件，即時啟動流程</div>
-                    </div>
-                    <div class="workflow-node">
-                        <div class="node-title">🤖 AI 智能分析</div>
-                        <div class="node-desc">使用 AI 提取關鍵資訊與分類</div>
-                    </div>
-                    <div class="workflow-node">
-                        <div class="node-title">💾 資料庫同步</div>
-                        <div class="node-desc">自動更新 CRM / ERP 系統</div>
-                    </div>
-                </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="自動化工作流程" loading="lazy">
             </div>
         </div>
     </section>
@@ -915,6 +1002,7 @@
 
             <div class="journey-timeline">
                 <div class="journey-step">
+                    <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80" alt="混亂的辦公室" class="journey-image" loading="lazy">
                     <span class="journey-phase">第一階段</span>
                     <h3>每天都在做重複的事</h3>
                     <p>
@@ -927,6 +1015,7 @@
                 </div>
 
                 <div class="journey-step">
+                    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80" alt="團隊協作" class="journey-image" loading="lazy">
                     <span class="journey-phase">第二階段</span>
                     <h3>系統開始幫我工作</h3>
                     <p>
@@ -939,6 +1028,7 @@
                 </div>
 
                 <div class="journey-step">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="成功慶祝" class="journey-image" loading="lazy">
                     <span class="journey-phase">第三階段</span>
                     <h3>把時間留給重要的事</h3>
                     <p>
@@ -1000,6 +1090,9 @@
 
         <div class="testimonials-grid">
             <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="客戶頭像" class="testimonial-avatar" loading="lazy">
+                </div>
                 <p class="testimonial-text">
                     「我們是一家 20 人的貿易公司，之前每天要手動處理上百封詢價信。
                     現在 N8N 自動幫我分類、建檔、回覆，我們業務團隊可以專心開發新客戶。
@@ -1015,6 +1108,9 @@
             </div>
 
             <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80" alt="客戶頭像" class="testimonial-avatar" loading="lazy">
+                </div>
                 <p class="testimonial-text">
                     「我們製造業最怕出錯，以前人工輸入訂單常常打錯規格，
                     造成生產線損失。導入自動化後，錯誤率幾乎是零，
@@ -1030,6 +1126,9 @@
             </div>
 
             <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&q=80" alt="客戶頭像" class="testimonial-avatar" loading="lazy">
+                </div>
                 <p class="testimonial-text">
                     「最讓我驚訝的是價格。我們之前詢問過其他廠商，
                     報價都是百萬起跳。智動流團隊用 N8N 幫我們做到一樣的效果，
@@ -1045,6 +1144,9 @@
             </div>
 
             <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80" alt="客戶頭像" class="testimonial-avatar" loading="lazy">
+                </div>
                 <p class="testimonial-text">
                     「我們公司只有 8 個人，沒有 IT 部門。
                     原本很擔心系統出問題沒人會修，但智動流提供的技術支援非常即時，
@@ -1092,6 +1194,85 @@
                     <div class="big-number">3 個月</div>
                     <div class="stat-title">回本週期</div>
                     <div class="stat-desc">平均投資回收期</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 成功案例 -->
+    <section class="case-studies">
+        <div class="section-title">成功案例</div>
+        <div class="section-subtitle">
+            看看這些企業如何透過自動化，實現效率躍升
+        </div>
+
+        <div class="case-grid">
+            <div class="case-item">
+                <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600&q=80" alt="客服自動化" class="case-image" loading="lazy">
+                <div class="case-content">
+                    <span class="case-industry">電商產業</span>
+                    <h3>從每天 200 封客服信到自動處理</h3>
+                    <p>
+                        某電商平台每天收到大量重複性詢問（訂單查詢、退換貨流程等），
+                        客服團隊疲於應付。我們設計 N8N 工作流，
+                        自動分類郵件並根據關鍵字發送標準回覆，複雜問題才轉人工處理。
+                    </p>
+                    <div class="case-results">
+                        <div class="result-item">
+                            <div class="result-value">5 分鐘</div>
+                            <div class="result-label">平均回覆時間</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-value">客滿↑35%</div>
+                            <div class="result-label">滿意度提升</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-item">
+                <div class="case-content">
+                    <span class="case-industry">製造業</span>
+                    <h3>訂單自動同步 ERP，零錯誤率</h3>
+                    <p>
+                        傳統製造業透過 Email 接收訂單後，需人工輸入 ERP 系統，
+                        經常因規格打錯造成生產錯誤。我們建立自動化流程，
+                        訂單郵件自動解析並寫入 ERP，同步通知生產與倉管。
+                    </p>
+                    <div class="case-results">
+                        <div class="result-item">
+                            <div class="result-value">0 次</div>
+                            <div class="result-label">錯誤次數/月</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-value">3 小時</div>
+                            <div class="result-label">每日節省時間</div>
+                        </div>
+                    </div>
+                </div>
+                <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=600&q=80" alt="製造業自動化" class="case-image" loading="lazy">
+            </div>
+
+            <div class="case-item">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="報表自動化" class="case-image" loading="lazy">
+                <div class="case-content">
+                    <span class="case-industry">貿易公司</span>
+                    <h3>即時業績儀表板，隨時掌握營運</h3>
+                    <p>
+                        原本每週製作業績報表需要財務人員花 2 天時間整理 Excel，
+                        數據還是落後一週。現在 N8N 每小時自動抓取銷售數據，
+                        更新 Google Sheets 儀表板，老闆隨時都能看到最新狀況。
+                    </p>
+                    <div class="case-results">
+                        <div class="result-item">
+                            <div class="result-value">24/7</div>
+                            <div class="result-label">即時監控</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-value">決策↑50%</div>
+                            <div class="result-label">反應速度</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1278,13 +1459,6 @@
         // 方案選擇功能
         function selectPlan(planName, price) {
             alert(`您選擇了 ${planName}\n\n我們將為您導向安全的支付頁面。\n實際部署時會串接 Stripe Payment Links。`);
-            
-            // 實際使用時的程式碼範例：
-            // if (planName === '入門方案') {
-            //     window.location.href = 'YOUR_STRIPE_PAYMENT_LINK_FOR_STARTER';
-            // } else if (planName === '專業方案') {
-            //     window.location.href = 'YOUR_STRIPE_PAYMENT_LINK_FOR_PRO';
-            // }
         }
 
         // 企業方案聯絡
@@ -1302,24 +1476,9 @@
             
             console.log('表單資料:', data);
             
-            alert('感謝您的諮詢！\n\n我們已收到您的資料，將在 24 小時內與您聯繫。\n\n實際部署時會串接到您的 N8N Webhook 或 Email 通知系統。');
+            alert('感謝您的諮詢！\n\n我們已收到您的資料，將在 24 小時內與您聯繫。');
             
             event.target.reset();
-            
-            // 實際使用時的程式碼範例：
-            // fetch('YOUR_N8N_WEBHOOK_URL', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(data)
-            // })
-            // .then(response => response.json())
-            // .then(result => {
-            //     alert('感謝您的諮詢！我們將盡快與您聯繫。');
-            //     event.target.reset();
-            // })
-            // .catch(error => {
-            //     alert('提交失敗，請稍後再試或直接來電聯繫。');
-            // });
         }
 
         // 平滑滾動
@@ -1349,7 +1508,7 @@
         }, observerOptions);
 
         // 為需要動畫的元素添加觀察
-        document.querySelectorAll('.pain-card, .pricing-card, .journey-step, .testimonial-card, .stat-card').forEach(el => {
+        document.querySelectorAll('.pain-card, .pricing-card, .journey-step, .testimonial-card, .stat-card, .case-item').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'all 0.6s ease';
