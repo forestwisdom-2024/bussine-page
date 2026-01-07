@@ -1488,29 +1488,269 @@
         contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // 3. 表單提交模擬 (前端展示用)
-    // 注意：這裡先模擬成功，未來我們會在這邊串接 N8N
-    function handleSubmit(event) {
-        event.preventDefault();
-        
-        const submitBtn = event.target.querySelector('button[type="submit"]');
-        const originalBtnText = submitBtn.innerText;
-        
-        // 鎖定按鈕
-        submitBtn.disabled = true;
-        submitBtn.innerText = '處理中...';
+   // ============================================
+// N8N Webhook 整合程式碼
+// 將此程式碼替換到您的 HTML 檔案中
+// ============================================
 
-        // 模擬網路延遲
-        setTimeout(() => {
-            // 這裡未來會換成 fetch() 打給 N8N
-            alert('【前端測試成功】\n感謝您的諮詢！\n\n因為目前尚未串接後端，此表單僅為展示。\n未來串接後，這裡會跳轉至付款頁面或發送確認信。');
-            
-            // 重置表單與按鈕
-            event.target.reset();
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalBtnText;
-        }, 1000);
+// 3. 表單提交 - 串接 N8N Webhook
+async function handleSubmit(event) {
+    event.preventDefault();
+    
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerText;
+    
+    // 收集表單資料
+    const formData = new FormData(event.target);
+    const data = {
+        company: formData.get('company'),
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || '未提供',
+        message: formData.get('message') || '未填寫',
+        submitTime: new Date().toISOString(),
+        source: '智動流官網'
+    };
+    
+    // 鎖定按鈕並顯示載入狀態
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;"><svg style="animation: spin 1s linear infinite; width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"/></svg>送出中...</span>';
+    
+    try {
+        // 發送到 N8N Webhook
+        const response = await fetch('https://wiselifeai.zeabur.app/webhook/contact-form', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        // 檢查回應狀態
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        // 顯示成功訊息
+        showSuccessMessage(data.name);
+        
+        // 重置表單
+        event.target.reset();
+        
+        // 可選：追蹤轉換事件（如果您有使用 Google Analytics）
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'form_submit', {
+                'event_category': 'contact',
+                'event_label': 'contact_form_success'
+            });
+        }
+        
+    } catch (error) {
+        console.error('表單提交錯誤:', error);
+        showErrorMessage(error.message);
+    } finally {
+        // 恢復按鈕狀態
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
     }
+}
+
+// 顯示成功訊息 (優雅的彈出視窗)
+function showSuccessMessage(name) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #1E293B, #334155);
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #F97316;
+            box-shadow: 0 20px 60px rgba(249, 115, 22, 0.3);
+            animation: slideUp 0.3s ease;
+        ">
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #F97316, #06B6D4);
+                border-radius: 50%;
+                margin: 0 auto 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2 style="color: #F8FAFC; font-size: 2rem; margin-bottom: 1rem; font-weight: 900;">
+                感謝您的諮詢！
+            </h2>
+            <p style="color: #CBD5E1; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                ${name}，您的需求已成功送出！<br>
+                我們已發送確認郵件至您的信箱。<br><br>
+                <strong style="color: #F97316;">專業顧問將在 24 小時內與您聯繫</strong>
+            </p>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: #F97316;
+                color: white;
+                border: none;
+                padding: 1rem 3rem;
+                border-radius: 10px;
+                font-size: 1.1rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-family: 'Noto Sans TC', sans-serif;
+            " onmouseover="this.style.background='#EA580C'" onmouseout="this.style.background='#F97316'">
+                完成
+            </button>
+        </div>
+    `;
+    
+    // 點擊背景關閉
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    document.body.appendChild(modal);
+    
+    // 5秒後自動關閉
+    setTimeout(() => {
+        if (document.body.contains(modal)) {
+            modal.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => modal.remove(), 300);
+        }
+    }, 5000);
+}
+
+// 顯示錯誤訊息
+function showErrorMessage(errorDetails) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #1E293B, #334155);
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #ef4444;
+            box-shadow: 0 20px 60px rgba(239, 68, 68, 0.3);
+        ">
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: #ef4444;
+                border-radius: 50%;
+                margin: 0 auto 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 style="color: #F8FAFC; font-size: 1.8rem; margin-bottom: 1rem; font-weight: 900;">
+                提交失敗
+            </h2>
+            <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.8; margin-bottom: 2rem;">
+                很抱歉，表單提交時發生錯誤。<br>
+                請稍後再試，或直接聯繫我們：<br><br>
+                <strong style="color: #06B6D4;">📞 0912-345-678</strong><br>
+                <strong style="color: #06B6D4;">📧 contact@zhidongflow.com</strong>
+            </p>
+            <div style="
+                background: rgba(239, 68, 68, 0.1);
+                padding: 1rem;
+                border-radius: 8px;
+                margin-bottom: 1.5rem;
+                font-size: 0.85rem;
+                color: #fca5a5;
+                font-family: 'JetBrains Mono', monospace;
+            ">
+                錯誤詳情: ${errorDetails}
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" style="
+                background: #ef4444;
+                color: white;
+                border: none;
+                padding: 1rem 3rem;
+                border-radius: 10px;
+                font-size: 1.1rem;
+                font-weight: 700;
+                cursor: pointer;
+                font-family: 'Noto Sans TC', sans-serif;
+            ">
+                關閉
+            </button>
+        </div>
+    `;
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    document.body.appendChild(modal);
+}
+
+// 添加動畫樣式
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);
 
     // 4. 平滑滾動與動畫偵測 (維持原樣)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
