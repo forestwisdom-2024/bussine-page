@@ -1455,47 +1455,115 @@
         </p>
     </footer>
 
+    <!-- 監控開關按鈕 -->
+    <button id="monitor-toggle" onclick="toggleMonitor()" style="position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #F97316, #06B6D4); color: white; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 14px; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); z-index: 99998; font-family: 'Noto Sans TC', sans-serif; transition: all 0.3s ease;">
+        🔍 開啟監控
+    </button>
+    
+    <!-- 監控面板 -->
+    <div id="debug-monitor" style="position: fixed; bottom: 20px; right: 20px; width: 400px; max-height: 500px; background: rgba(15, 23, 42, 0.95); border: 2px solid #F97316; border-radius: 12px; padding: 15px; z-index: 99999; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #CBD5E1; overflow-y: auto; box-shadow: 0 10px 40px rgba(249, 115, 22, 0.3); display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #334155;">
+            <div style="font-weight: bold; color: #F97316; font-size: 14px;">📊 系統監控面板</div>
+            <button onclick="toggleMonitor()" style="background: #ef4444; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;">關閉</button>
+        </div>
+        <div id="monitor-logs"></div>
+        <button onclick="clearMonitorLogs()" style="width: 100%; background: #334155; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 11px;">清除記錄</button>
+    </div>
+
     <script>
         // ============================================
-        // 方案選擇處理 - 串接 N8N Workflow 2
+        // 監控系統
         // ============================================
-
+        
+        let monitorLogs = [];
+        
+        function addMonitorLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('zh-TW', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit'
+            });
+            
+            monitorLogs.push({ timestamp, message, type });
+            updateMonitorDisplay();
+        }
+        
+        function updateMonitorDisplay() {
+            const logsContainer = document.getElementById('monitor-logs');
+            
+            const colorMap = {
+                success: '#10b981',
+                error: '#ef4444',
+                info: '#06B6D4'
+            };
+            
+            const bgMap = {
+                success: 'rgba(16, 185, 129, 0.1)',
+                error: 'rgba(239, 68, 68, 0.1)',
+                info: 'rgba(6, 182, 212, 0.1)'
+            };
+            
+            logsContainer.innerHTML = monitorLogs.map(log => `
+                <div style="padding: 6px 8px; margin: 4px 0; border-radius: 4px; border-left: 3px solid ${colorMap[log.type] || '#64748b'}; background: ${bgMap[log.type] || 'rgba(51, 65, 85, 0.3)'}; line-height: 1.5;">
+                    <span style="color: #64748b; font-size: 10px; margin-right: 8px;">${log.timestamp}</span>
+                    ${log.message}
+                </div>
+            `).join('');
+            
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+        
+        function toggleMonitor() {
+            const monitor = document.getElementById('debug-monitor');
+            const toggle = document.getElementById('monitor-toggle');
+            
+            if (monitor.style.display === 'none' || monitor.style.display === '') {
+                monitor.style.display = 'block';
+                toggle.style.display = 'none';
+                addMonitorLog('監控面板已開啟', 'info');
+            } else {
+                monitor.style.display = 'none';
+                toggle.style.display = 'block';
+            }
+        }
+        
+        function clearMonitorLogs() {
+            monitorLogs = [];
+            updateMonitorDisplay();
+            addMonitorLog('記錄已清除', 'info');
+        }
+        
+        // ============================================
+        // 方案選擇處理
+        // ============================================
+        
         async function selectPlan(planName, price) {
-            // 先滾動到表單讓用戶填寫聯絡資訊
+            addMonitorLog(`用戶點擊: ${planName} (NT$ ${price})`, 'info');
+            
             const contactSection = document.querySelector('#contactForm');
             const messageBox = document.querySelector('#message');
             
-            // 組合預填訊息
             const prefillMessage = `你好，我對「${planName}」感興趣 (預算: NT$ ${price.toLocaleString()}/月)。\n我想了解更多付款方式與詳細導入流程。`;
-            
-            // 填入訊息
             messageBox.value = prefillMessage;
-            
-            // 平滑滾動到表單位置
             contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // 視覺回饋：讓訊息框閃爍一下提醒使用者
             messageBox.style.transition = 'background-color 0.3s';
             messageBox.style.backgroundColor = 'rgba(249, 115, 22, 0.2)';
             setTimeout(() => {
                 messageBox.style.backgroundColor = 'var(--primary-dark)';
             }, 500);
             
-            // 儲存方案資訊到 sessionStorage，待表單送出時一起發送
             sessionStorage.setItem('selectedPlan', JSON.stringify({
                 planName: planName,
                 price: price
             }));
             
-            console.log('✓ 方案已選擇並儲存:', planName, price); // 除錯用
-            
-            // 顯示提示訊息
+            addMonitorLog('✓ 方案已儲存', 'success');
             showPlanSelectedNotification(planName, price);
         }
-
-        // 顯示方案選擇通知
+        
         function showPlanSelectedNotification(planName, price) {
-            // 建立通知元素
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -1527,46 +1595,42 @@
             
             document.body.appendChild(notification);
             
-            // 3秒後自動消失
             setTimeout(() => {
                 notification.style.animation = 'slideOutRight 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
-
-        // 企業方案聯絡
+        
         function contactEnterprise() {
+            addMonitorLog('用戶點擊企業方案', 'info');
+            
             const contactSection = document.querySelector('#contactForm');
             const messageBox = document.querySelector('#message');
             
             messageBox.value = '你好，我們是大型企業/機構，有客製化自動化流程的需求，希望能安排顧問諮詢。';
             contactSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // 儲存企業方案資訊
             sessionStorage.setItem('selectedPlan', JSON.stringify({
                 planName: '企業方案',
-                price: 0 // 客製報價
+                price: 0
             }));
             
-            console.log('✓ 企業方案已選擇'); // 除錯用
-            
-            // 顯示提示
+            addMonitorLog('✓ 企業方案已儲存', 'success');
             showPlanSelectedNotification('企業方案', '客製報價');
         }
-
+        
         // ============================================
-        // 表單提交處理 - 整合方案資訊
+        // 表單提交處理
         // ============================================
-
+        
         async function handleSubmit(event) {
             event.preventDefault();
             
-            console.log('=== 表單送出開始 ==='); // 除錯用
+            addMonitorLog('開始處理表單', 'info');
             
             const submitBtn = event.target.querySelector('button[type="submit"]');
             const originalBtnText = submitBtn.innerText;
             
-            // 收集表單資料
             const formData = new FormData(event.target);
             const data = {
                 company: formData.get('company'),
@@ -1578,11 +1642,10 @@
                 source: '智動流官網'
             };
             
-            // 檢查是否有選擇方案
+            addMonitorLog(`資料: ${data.name} / ${data.email}`, 'info');
+            
             const selectedPlan = sessionStorage.getItem('selectedPlan');
             let hasPlanSelection = false;
-            
-            console.log('讀取的 sessionStorage:', selectedPlan); // 除錯用
             
             if (selectedPlan) {
                 try {
@@ -1590,119 +1653,86 @@
                     data.selectedPlan = planData.planName;
                     data.selectedPrice = planData.price;
                     hasPlanSelection = true;
-                    console.log('✓ 偵測到方案選擇:', planData); // 除錯用
+                    addMonitorLog(`✓ 方案: ${planData.planName}`, 'success');
                 } catch (e) {
-                    console.error('解析方案資料失敗:', e);
+                    addMonitorLog(`✗ 解析失敗: ${e.message}`, 'error');
                 }
             } else {
-                console.log('✗ 沒有方案選擇'); // 除錯用
+                addMonitorLog('無方案選擇', 'info');
             }
             
-            // 鎖定按鈕並顯示載入狀態
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;"><svg style="animation: spin 1s linear infinite; width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"/></svg>送出中...</span>';
             
             try {
-                // 如果有選擇方案，同時發送到兩個 webhook
                 if (hasPlanSelection) {
-                    console.log('✓ 發送到 Workflow 2 (方案購買)...'); // 除錯用
-                    console.log('發送資料:', {
-                        planName: data.selectedPlan,
-                        price: data.selectedPrice,
-                        email: data.email,
-                        name: data.name
-                    }); // 除錯用
+                    addMonitorLog('→ 發送 Workflow 2', 'info');
+                    addMonitorLog('→ 發送 Workflow 1', 'info');
                     
-                    // 發送到 workflow 2 (方案購買處理)
-                    const purchaseResponse = fetch('https://wiselifeai.zeabur.app/webhook/plan-purchase', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            planName: data.selectedPlan,
-                            price: data.selectedPrice,
-                            email: data.email,
-                            name: data.name,
-                            company: data.company,
-                            phone: data.phone,
-                            message: data.message,
-                            submitTime: data.submitTime
+                    const responses = await Promise.all([
+                        fetch('https://wiselifeai.zeabur.app/webhook/plan-purchase', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                planName: data.selectedPlan,
+                                price: data.selectedPrice,
+                                email: data.email,
+                                name: data.name,
+                                company: data.company,
+                                phone: data.phone,
+                                message: data.message,
+                                submitTime: data.submitTime
+                            })
+                        }),
+                        fetch('https://wiselifeai.zeabur.app/webhook/contact-form', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
                         })
-                    });
+                    ]);
                     
-                    console.log('✓ 發送到 Workflow 1 (諮詢表單)...'); // 除錯用
+                    addMonitorLog(`✓ Workflow 2: ${responses[0].status}`, responses[0].ok ? 'success' : 'error');
+                    addMonitorLog(`✓ Workflow 1: ${responses[1].status}`, responses[1].ok ? 'success' : 'error');
                     
-                    // 發送到 workflow 1 (諮詢表單處理)
-                    const contactResponse = fetch('https://wiselifeai.zeabur.app/webhook/contact-form', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
-                    });
-                    
-                    // 等待兩個請求都完成
-                    const [purchase, contact] = await Promise.all([purchaseResponse, contactResponse]);
-                    
-                    console.log('✓ Workflow 2 狀態:', purchase.status); // 除錯用
-                    console.log('✓ Workflow 1 狀態:', contact.status); // 除錯用
-                    
-                    if (!purchase.ok || !contact.ok) {
-                        throw new Error('提交失敗');
+                    if (!responses[0].ok || !responses[1].ok) {
+                        throw new Error('部分失敗');
                     }
                     
-                    // 清除 sessionStorage
                     sessionStorage.removeItem('selectedPlan');
+                    addMonitorLog('✓ 已清除 sessionStorage', 'success');
                     
-                    // 顯示成功訊息（含方案資訊）
                     showSuccessMessageWithPlan(data.name, data.selectedPlan, data.selectedPrice);
                     
                 } else {
-                    // 沒有選擇方案，只發送到 workflow 1
-                    console.log('✓ 只發送到 Workflow 1（一般諮詢）...'); // 除錯用
+                    addMonitorLog('→ 只發送 Workflow 1', 'info');
                     
                     const response = await fetch('https://wiselifeai.zeabur.app/webhook/contact-form', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                     
-                    console.log('✓ Workflow 1 狀態:', response.status); // 除錯用
+                    addMonitorLog(`✓ Workflow 1: ${response.status}`, response.ok ? 'success' : 'error');
                     
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        throw new Error(`HTTP ${response.status}`);
                     }
                     
-                    // 顯示一般成功訊息
                     showSuccessMessage(data.name);
                 }
                 
-                // 重置表單
                 event.target.reset();
-                
-                console.log('=== 表單送出成功 ==='); // 除錯用
-                
-                // Google Analytics 追蹤（如果有）
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'form_submit', {
-                        'event_category': hasPlanSelection ? 'plan_purchase' : 'contact',
-                        'event_label': hasPlanSelection ? data.selectedPlan : 'contact_form_success'
-                    });
-                }
+                addMonitorLog('✓ 送出成功', 'success');
                 
             } catch (error) {
-                console.error('表單提交錯誤:', error);
+                addMonitorLog(`✗ 錯誤: ${error.message}`, 'error');
                 showErrorMessage(error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
             }
         }
-
-        // 顯示包含方案資訊的成功訊息
+        
         function showSuccessMessageWithPlan(name, planName, price) {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -1719,89 +1749,28 @@
                 animation: fadeIn 0.3s ease;
             `;
             
-            const priceText = price === 0 || price === '客製報價' 
-                ? '客製報價' 
-                : `NT$ ${price.toLocaleString()} / 月`;
+            const priceText = price === 0 ? '客製報價' : `NT$ ${price.toLocaleString()} / 月`;
             
             modal.innerHTML = `
-                <div style="
-                    background: linear-gradient(135deg, #1E293B, #334155);
-                    padding: 3rem;
-                    border-radius: 20px;
-                    max-width: 550px;
-                    width: 90%;
-                    text-align: center;
-                    border: 2px solid #F97316;
-                    box-shadow: 0 20px 60px rgba(249, 115, 22, 0.3);
-                    animation: slideUp 0.3s ease;
-                ">
-                    <div style="
-                        width: 80px;
-                        height: 80px;
-                        background: linear-gradient(135deg, #F97316, #06B6D4);
-                        border-radius: 50%;
-                        margin: 0 auto 1.5rem;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    ">
+                <div style="background: linear-gradient(135deg, #1E293B, #334155); padding: 3rem; border-radius: 20px; max-width: 550px; width: 90%; text-align: center; border: 2px solid #F97316; box-shadow: 0 20px 60px rgba(249, 115, 22, 0.3); animation: slideUp 0.3s ease;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #F97316, #06B6D4); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                             <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <h2 style="color: #F8FAFC; font-size: 2rem; margin-bottom: 1rem; font-weight: 900;">
-                        🎉 申請成功！
-                    </h2>
+                    <h2 style="color: #F8FAFC; font-size: 2rem; margin-bottom: 1rem; font-weight: 900;">🎉 申請成功！</h2>
                     <div style="background: rgba(249, 115, 22, 0.1); padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px dashed #F97316;">
-                        <div style="color: #F97316; font-size: 1.3em; font-weight: bold; margin-bottom: 10px;">
-                            ${planName}
-                        </div>
-                        <div style="color: #CBD5E1; font-size: 1.1em;">
-                            ${priceText}
-                        </div>
+                        <div style="color: #F97316; font-size: 1.3em; font-weight: bold; margin-bottom: 10px;">${planName}</div>
+                        <div style="color: #CBD5E1; font-size: 1.1em;">${priceText}</div>
                     </div>
-                    <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.8; margin-bottom: 2rem;">
-                        ${name}，感謝您選擇<strong style="color: #F97316;">${planName}</strong>！<br><br>
-                        我們已發送詳細的方案資訊與付款方式到您的信箱。<br>
-                        專業顧問將在 <strong style="color: #06B6D4;">24 小時內</strong>與您聯繫。
-                    </p>
-                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; color: #856404; font-size: 0.9em;">
-                        💡 請留意來電 <strong>0912-345-678</strong> 或查看 Email
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" style="
-                        background: #F97316;
-                        color: white;
-                        border: none;
-                        padding: 1rem 3rem;
-                        border-radius: 10px;
-                        font-size: 1.1rem;
-                        font-weight: 700;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        font-family: 'Noto Sans TC', sans-serif;
-                    " onmouseover="this.style.background='#EA580C'" onmouseout="this.style.background='#F97316'">
-                        完成
-                    </button>
+                    <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.8; margin-bottom: 2rem;">${name}，感謝您選擇<strong style="color: #F97316;">${planName}</strong>！<br><br>我們已發送詳細的方案資訊與付款方式到您的信箱。<br>專業顧問將在 <strong style="color: #06B6D4;">24 小時內</strong>與您聯繫。</p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #F97316; color: white; border: none; padding: 1rem 3rem; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif;">完成</button>
                 </div>
             `;
             
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-            
             document.body.appendChild(modal);
-            
-            setTimeout(() => {
-                if (document.body.contains(modal)) {
-                    modal.style.animation = 'fadeOut 0.3s ease';
-                    setTimeout(() => modal.remove(), 300);
-                }
-            }, 8000);
         }
-
-        // 原有的成功訊息函數（用於沒有選擇方案的情況）
+        
         function showSuccessMessage(name) {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -1819,73 +1788,21 @@
             `;
             
             modal.innerHTML = `
-                <div style="
-                    background: linear-gradient(135deg, #1E293B, #334155);
-                    padding: 3rem;
-                    border-radius: 20px;
-                    max-width: 500px;
-                    width: 90%;
-                    text-align: center;
-                    border: 2px solid #F97316;
-                    box-shadow: 0 20px 60px rgba(249, 115, 22, 0.3);
-                    animation: slideUp 0.3s ease;
-                ">
-                    <div style="
-                        width: 80px;
-                        height: 80px;
-                        background: linear-gradient(135deg, #F97316, #06B6D4);
-                        border-radius: 50%;
-                        margin: 0 auto 1.5rem;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    ">
+                <div style="background: linear-gradient(135deg, #1E293B, #334155); padding: 3rem; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 2px solid #F97316; box-shadow: 0 20px 60px rgba(249, 115, 22, 0.3); animation: slideUp 0.3s ease;">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #F97316, #06B6D4); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                             <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <h2 style="color: #F8FAFC; font-size: 2rem; margin-bottom: 1rem; font-weight: 900;">
-                        感謝您的諮詢！
-                    </h2>
-                    <p style="color: #CBD5E1; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
-                        ${name}，您的需求已成功送出！<br>
-                        我們已發送確認郵件至您的信箱。<br><br>
-                        <strong style="color: #F97316;">專業顧問將在 24 小時內與您聯繫</strong>
-                    </p>
-                    <button onclick="this.parentElement.parentElement.remove()" style="
-                        background: #F97316;
-                        color: white;
-                        border: none;
-                        padding: 1rem 3rem;
-                        border-radius: 10px;
-                        font-size: 1.1rem;
-                        font-weight: 700;
-                        cursor: pointer;
-                        transition: all 0.3s;
-                        font-family: 'Noto Sans TC', sans-serif;
-                    " onmouseover="this.style.background='#EA580C'" onmouseout="this.style.background='#F97316'">
-                        完成
-                    </button>
+                    <h2 style="color: #F8FAFC; font-size: 2rem; margin-bottom: 1rem; font-weight: 900;">感謝您的諮詢！</h2>
+                    <p style="color: #CBD5E1; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">${name}，您的需求已成功送出！<br>我們已發送確認郵件至您的信箱。<br><br><strong style="color: #F97316;">專業顧問將在 24 小時內與您聯繫</strong></p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #F97316; color: white; border: none; padding: 1rem 3rem; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Noto Sans TC', sans-serif;">完成</button>
                 </div>
             `;
             
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-            
             document.body.appendChild(modal);
-            
-            setTimeout(() => {
-                if (document.body.contains(modal)) {
-                    modal.style.animation = 'fadeOut 0.3s ease';
-                    setTimeout(() => modal.remove(), 300);
-                }
-            }, 5000);
         }
-
-        // 顯示錯誤訊息
+        
         function showErrorMessage(errorDetails) {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -1903,107 +1820,49 @@
             `;
             
             modal.innerHTML = `
-                <div style="
-                    background: linear-gradient(135deg, #1E293B, #334155);
-                    padding: 3rem;
-                    border-radius: 20px;
-                    max-width: 500px;
-                    width: 90%;
-                    text-align: center;
-                    border: 2px solid #ef4444;
-                    box-shadow: 0 20px 60px rgba(239, 68, 68, 0.3);
-                ">
-                    <div style="
-                        width: 80px;
-                        height: 80px;
-                        background: #ef4444;
-                        border-radius: 50%;
-                        margin: 0 auto 1.5rem;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    ">
+                <div style="background: linear-gradient(135deg, #1E293B, #334155); padding: 3rem; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 2px solid #ef4444; box-shadow: 0 20px 60px rgba(239, 68, 68, 0.3);">
+                    <div style="width: 80px; height: 80px; background: #ef4444; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
                             <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round"/>
                         </svg>
                     </div>
-                    <h2 style="color: #F8FAFC; font-size: 1.8rem; margin-bottom: 1rem; font-weight: 900;">
-                        提交失敗
-                    </h2>
-                    <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.8; margin-bottom: 2rem;">
-                        很抱歉，表單提交時發生錯誤。<br>
-                        請稍後再試，或直接聯繫我們：<br><br>
-                        <strong style="color: #06B6D4;">📞 0912-345-678</strong><br>
-                        <strong style="color: #06B6D4;">📧 contact@zhidongflow.com</strong>
-                    </p>
-                    <div style="
-                        background: rgba(239, 68, 68, 0.1);
-                        padding: 1rem;
-                        border-radius: 8px;
-                        margin-bottom: 1.5rem;
-                        font-size: 0.85rem;
-                        color: #fca5a5;
-                        font-family: 'JetBrains Mono', monospace;
-                    ">
-                        錯誤詳情: ${errorDetails}
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" style="
-                        background: #ef4444;
-                        color: white;
-                        border: none;
-                        padding: 1rem 3rem;
-                        border-radius: 10px;
-                        font-size: 1.1rem;
-                        font-weight: 700;
-                        cursor: pointer;
-                        font-family: 'Noto Sans TC', sans-serif;
-                    ">
-                        關閉
-                    </button>
+                    <h2 style="color: #F8FAFC; font-size: 1.8rem; margin-bottom: 1rem; font-weight: 900;">提交失敗</h2>
+                    <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.8; margin-bottom: 2rem;">很抱歉，表單提交時發生錯誤。<br>請稍後再試，或直接聯繫我們：<br><br><strong style="color: #06B6D4;">📞 0912-345-678</strong><br><strong style="color: #06B6D4;">📧 contact@zhidongflow.com</strong></p>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #ef4444; color: white; border: none; padding: 1rem 3rem; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer;">關閉</button>
                 </div>
             `;
             
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-            
             document.body.appendChild(modal);
         }
-
-        // 添加動畫樣式
-        if (!document.querySelector('#animation-styles')) {
-            const style = document.createElement('style');
-            style.id = 'animation-styles';
-            style.textContent = `
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes fadeOut {
-                    from { opacity: 1; }
-                    to { opacity: 0; }
-                }
-                @keyframes slideUp {
-                    from { transform: translateY(50px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-                @keyframes slideInRight {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes slideOutRight {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateY(50px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            addMonitorLog('系統就緒', 'success');
+        });
     });
 </script>
 </body>
